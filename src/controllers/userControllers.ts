@@ -1,13 +1,13 @@
 import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
-import prisma from '../config/database'
+import prisma from '../config/database.js'
 import jwt from 'jsonwebtoken'
 
 export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
         if (email && password) {
-            const user = await prisma.user.findUnique({
+            const user = await (prisma as any).user.findUnique({
                 where: {
                     email: email
                 }
@@ -40,7 +40,7 @@ export const register = async (req : Request, res: Response)=>{
         return res.status(400).json({error: 'Invalid Login'})
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await (prisma as any).user.findUnique({
         where:{
             email: email
         }
@@ -52,7 +52,7 @@ export const register = async (req : Request, res: Response)=>{
 
     const hashedPassword = await bcrypt.hash(password,10)
 
-    const newUser = await prisma.user.create({
+    const newUser = await (prisma as any).user.create({
         data:{
             email,
             name,
@@ -77,6 +77,7 @@ export const register = async (req : Request, res: Response)=>{
         }
     })
 }catch(e){
+    console.log('Registration error:' , e)
     return res.status(500).json({error: "Regsitration Failed"})
 }
 }

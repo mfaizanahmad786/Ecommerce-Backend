@@ -1,11 +1,18 @@
+import 'dotenv/config';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
-import { PrismaNeon } from '@prisma/adapter-neon';
-import { Pool } from '@neondatabase/serverless';
+import pg from 'pg';
 
-const connectionString = process.env.DATABASE_URL!;
+const { Pool } = pg;
+
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+    throw new Error('DATABASE_URL is not defined in .env file');
+}
+
 const pool = new Pool({ connectionString });
-const adapter = new PrismaNeon(pool);
-
-const prisma = new PrismaClient({ adapter });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter } as any);
 
 export default prisma;

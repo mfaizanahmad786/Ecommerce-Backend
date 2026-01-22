@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import prisma from './config/database.js';
+import userRoutes from './routes/userRoutes.js'
 
 dotenv.config();
 
@@ -15,10 +16,14 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/', async (req: Request, res: Response) => {
     try {
-        await prisma.$connect();
+        // Query PostgreSQL version
+        const result = await prisma.$queryRaw<Array<{ version: string }>>`SELECT version()`;
+        const { version } = result[0];
+        
         res.json({
             message: 'Ecommerce Backend API is running',
-            database: 'Connected to Neon PostgreSQL ✅'
+            database: 'Connected to Neon PostgreSQL ✅',
+            version
         });
     } catch (error) {
         res.status(500).json({
@@ -27,6 +32,10 @@ app.get('/', async (req: Request, res: Response) => {
         });
     }
 });
+
+//Routes
+app.use('/api/users', userRoutes)
+
 
 app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);

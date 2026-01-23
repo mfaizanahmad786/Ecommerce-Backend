@@ -3,8 +3,9 @@ import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import prisma from './config/database.js';
-import userRoutes from './routes/userRoutes.js'
-import productRoutes from './routes/productRoutes.js'
+import userRoutes from './routes/userRoutes.js';
+import productRoutes from './routes/productRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
 
 dotenv.config();
 
@@ -35,8 +36,9 @@ app.get('/', async (req: Request, res: Response) => {
 });
 
 //Routes
-app.use('/api/users', userRoutes)
-app.use('/api/products', productRoutes)
+app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
 
 
 app.listen(PORT, () => {

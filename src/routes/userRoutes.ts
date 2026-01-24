@@ -1,17 +1,20 @@
 import { Router } from 'express';
 import { login, register } from '../controllers/userControllers.js';
 import { authenticate } from '../middleware/authMiddlewares.js';
+import { validate } from '../middleware/validate.js';
+import { registerSchema, loginSchema } from '../config/validationSchemas.js';
 
+const router = Router();
 
-const router = Router()
+// Apply validation middleware before controllers
+router.post('/register', validate(registerSchema), register);
+router.post('/login', validate(loginSchema), login);
 
-router.post('/register', register)
-router.post('/login', login)
-
-router.get('/profile',authenticate, async (req, res) => {
+router.get('/profile', authenticate, async (req, res) => {
     res.json({
-        message: 'This is a protected rout',
+        message: 'This is a protected route',
         user: req.user
-    })
-})
-export default router
+    });
+});
+
+export default router;

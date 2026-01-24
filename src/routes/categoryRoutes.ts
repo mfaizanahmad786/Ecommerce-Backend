@@ -7,19 +7,46 @@ import {
     updateCategory,
     deleteCategory
 } from '../controllers/categoryControllers.js';
-import { authenticate } from '../middleware/authMiddlewares.js';
-import { authorize } from '../middleware/authMiddlewares.js';
+import { authenticate, authorize } from '../middleware/authMiddlewares.js';
+import { validate } from '../middleware/validate.js';
+import {
+    createCategorySchema,
+    updateCategorySchema,
+    categoryIdSchema,
+    paginationSchema,
+    categoryFilterSchema
+} from '../config/validationSchemas.js';
 
 const router = Router();
 
-// Public routes
-router.get('/', getCategories);
-router.get('/:id', getCategoryById);
-router.get('/:id/products', getProductsByCategory);
+// Public routes with validation
+router.get('/', validate(categoryFilterSchema), getCategories);
+router.get('/:id', validate(categoryIdSchema), getCategoryById);
+router.get('/:id/products', validate(categoryIdSchema), validate(paginationSchema), getProductsByCategory);
 
-// Protected routes (Admin only)
-router.post('/', authenticate, authorize('ADMIN'), createCategory);
-router.put('/:id', authenticate, authorize('ADMIN'), updateCategory);
-router.delete('/:id', authenticate, authorize('ADMIN'), deleteCategory);
+// Protected routes (Admin only) with validation
+router.post(
+    '/',
+    authenticate,
+    authorize('ADMIN'),
+    validate(createCategorySchema),
+    createCategory
+);
+
+router.put(
+    '/:id',
+    authenticate,
+    authorize('ADMIN'),
+    validate(updateCategorySchema),
+    updateCategory
+);
+
+router.delete(
+    '/:id',
+    authenticate,
+    authorize('ADMIN'),
+    validate(categoryIdSchema),
+    deleteCategory
+);
 
 export default router;

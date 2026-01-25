@@ -171,7 +171,7 @@ export const addToCart = async (req: Request, res: Response, next: NextFunction)
 export const updateCartItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId = req.user?.userId;
-        const { itemId } = req.params;
+        const itemId = req.params.itemId as string;
         const { quantity } = req.body;
 
         if (!userId) {
@@ -227,7 +227,7 @@ export const updateCartItem = async (req: Request, res: Response, next: NextFunc
 export const removeFromCart = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId = req.user?.userId;
-        const { itemId } = req.params;
+        const itemId = req.params.itemId as string;
 
         if (!userId) {
             throw new ValidationError('User not authenticated');

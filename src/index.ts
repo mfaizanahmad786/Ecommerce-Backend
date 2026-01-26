@@ -6,6 +6,7 @@ import prisma from './config/database.js';
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
 import { errorHandler, NotFoundError } from './middleware/errorHandler.js';
 
 dotenv.config();
@@ -40,6 +41,7 @@ app.get('/', async (req: Request, res: Response) => {
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/cart', cartRoutes);
 
 // ============================================
 // Handle 404 - Route Not Found

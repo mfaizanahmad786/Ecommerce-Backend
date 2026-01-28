@@ -1,12 +1,13 @@
-import express from 'express';
+import express from 'express'
 import type { Request, Response, NextFunction } from 'express';
-import dotenv from 'dotenv';
+import  dotenv from 'dotenv';
 import cors from 'cors';
 import prisma from './config/database.js';
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 import { errorHandler, NotFoundError } from './middleware/errorHandler.js';
 
 dotenv.config();
@@ -42,6 +43,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
 
 // ============================================
 // Handle 404 - Route Not Found

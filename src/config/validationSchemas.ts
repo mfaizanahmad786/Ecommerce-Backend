@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-// ============================================
+
 // USER VALIDATION SCHEMAS
-// ============================================
+
 
 export const registerSchema = z.object({
   body: z.object({
@@ -41,9 +41,9 @@ export const loginSchema = z.object({
   }),
 });
 
-// ============================================
+
 // PRODUCT VALIDATION SCHEMAS
-// ============================================
+
 
 export const createProductSchema = z.object({
   body: z.object({
@@ -135,9 +135,9 @@ export const productIdSchema = z.object({
   }),
 });
 
-// ============================================
+
 // CATEGORY VALIDATION SCHEMAS
-// ============================================
+
 
 export const createCategorySchema = z.object({
   body: z.object({
@@ -185,9 +185,9 @@ export const categoryIdSchema = z.object({
   }),
 });
 
-// ============================================
+
 // CART VALIDATION SCHEMAS
-// ============================================
+
 
 export const addToCartSchema = z.object({
   body: z.object({
@@ -227,9 +227,9 @@ export const removeCartItemSchema = z.object({
   }),
 });
 
-// ============================================
+
 // ORDER VALIDATION SCHEMAS
-// ============================================
+
 
 export const createOrderSchema = z.object({
   body: z.object({
@@ -256,6 +256,17 @@ export const updateOrderStatusSchema = z.object({
   }),
 });
 
+export const updatePaymentStatusSchema = z.object({
+  params: z.object({
+    id: z
+      .string()
+      .min(1, 'Order ID is required'),
+  }),
+  body: z.object({
+    paymentStatus: z.enum(['PENDING', 'PAID', 'FAILED', 'REFUNDED']),
+  }),
+});
+
 export const orderIdSchema = z.object({
   params: z.object({
     id: z
@@ -264,9 +275,8 @@ export const orderIdSchema = z.object({
   }),
 });
 
-// ============================================
+
 // QUERY PARAMETER VALIDATION SCHEMAS
-// ============================================
 
 export const paginationSchema = z.object({
   query: z.object({
@@ -369,9 +379,9 @@ export const orderFilterSchema = z.object({
   }),
 });
 
-// ============================================
+
 // ADVANCED VALIDATION EXAMPLES
-// ============================================
+
 
 // Password confirmation validation
 export const registerWithConfirmSchema = z.object({
@@ -432,9 +442,9 @@ export const priceRangeSchema = z.object({
     }),
 });
 
-// ============================================
+
 // TYPE EXPORTS (for TypeScript)
-// ============================================
+
 
 export type RegisterInput = z.infer<typeof registerSchema>['body'];
 export type LoginInput = z.infer<typeof loginSchema>['body'];
@@ -447,9 +457,9 @@ export type UpdateCartItemInput = z.infer<typeof updateCartItemSchema>['body'];
 export type CreateOrderInput = z.infer<typeof createOrderSchema>['body'];
 export type UpdateOrderStatusInput = z.infer<typeof updateOrderStatusSchema>['body'];
 
-// ============================================
+
 // REUSABLE FIELD VALIDATORS
-// ============================================
+
 
 export const emailValidator = z
   .string()

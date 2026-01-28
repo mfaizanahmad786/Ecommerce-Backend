@@ -19,18 +19,27 @@ enum OrderStatus {
   CANCELLED
 }
 
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
 model User {
-  id        String   @id @default(uuid())  // Fixed: was @uuid()
+  id        String   @id @default(uuid())
   email     String   @unique
   password  String
   name      String?
   role      Role     @default(USER)
   address   String?
   phone     String?
-  orders    Order[]   // One user has many orders
-  cart      Cart?     // One user has one cart
+  orders    Order[]
+  cart      Cart?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
+  @@index([email])
 }
 
 model Product {
@@ -41,26 +50,29 @@ model Product {
   stock       Int         @default(0)
   images      String[]
   categoryId  String?
-  category    Category?   @relation(fields: [categoryId], references: [id])  // Many products to one category
-  cartItems   CartItem[]  // Product can be in many carts
-  orderItems  OrderItem[] // Product can be in many orders
+  category    Category?   @relation(fields: [categoryId], references: [id])
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+  
+  @@index([categoryId])
+  @@index([name])
 }
 
 model Category {
   id        String    @id @default(uuid())
   name      String    @unique
-  products  Product[] // One category has many products
+  products  Product[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
 
 model Cart {
   id        String     @id @default(uuid())
-  userId    String     @unique              // Unique for 1:1 relation
+  userId    String     @unique
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items     CartItem[] // One cart has many items
+  items     CartItem[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 }
@@ -75,19 +87,27 @@ model CartItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([cartId, productId])  // One product per cart (no duplicates)
+  @@unique([cartId, productId])
+  @@index([cartId])
+  @@index([productId])
 }
 
 model Order {
-  id              String      @id @default(uuid())
+  id              String        @id @default(uuid())
   userId          String
-  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items           OrderItem[] // One order has many items
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items           OrderItem[]
   total           Float
-  status          OrderStatus @default(PENDING)
+  status          OrderStatus   @default(PENDING)
+  paymentMethod   String        // "CARD", "CASH_ON_DELIVERY", "PAYPAL"
+  paymentStatus   PaymentStatus @default(PENDING)
   shippingAddress String
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model OrderItem {
@@ -97,6 +117,9 @@ model OrderItem {
   productId String
   product   Product  @relation(fields: [productId], references: [id])
   quantity  Int
-  price     Float    // Store price at time of order
+  price     Float    // Price at time of purchase (IMPORTANT!)
   createdAt DateTime @default(now())
+  
+  @@index([orderId])
+  @@index([productId])
 }
